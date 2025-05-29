@@ -1,27 +1,8 @@
 #IMAGEN MODELO
-#CREAMOS LA IMAGEN
-FROM eclipse-temurin:21.0.7_6-jdk AS builder
-
-#DEFINIR DIRECTORIO RAIZ DE NUESTRO CONTAINER
-WORKDIR /root
-
-#COPIAR Y PEGAR ARCHIVOS DENTRO DEL CONTAINER
+FROM eclipse-temurin:21.0.7_6-jdk
 COPY . .
-
-#DESCARGAR LAS DEPENDENCIAS
+ARG WAR_FILE=target/demo-0.0.1-SNAPSHOT.war
+COPY ${WAR_FILE} app_demo.war
 RUN ./mvnw clean package -DskipTests
-
-
-#RUN THE APPLICATION
-FROM eclipse-temurin:21-jre
-
-WORKDIR /root
-
-#COPIAR EL CODIGO FUENTE DENTRO DEL CONTAINER
-COPY --from=builder /root/target/*.war demo-0.0.1-SNAPSHOT.war
-
-#CONSTRUIR NUESTRA APLICACION
 EXPOSE 8080
-
-#LEVANTAR NUESTRA APP CUANDO EL CONTENEDOR INICIE
-ENTRYPOINT ["java", "-jar", "demo-0.0.1-SNAPSHOT.war"]
+ENTRYPOINT ["java", "-jar", "app_demo.war"]

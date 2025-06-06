@@ -4,5 +4,9 @@ import org.springframework.ui.Model;
 
 public interface CalculatorService {
     String index();
-    String calcular(int num1, int num2, String operacion, Model model);
+    String sumar(int num1, int num2, Model model);
+    String restar(int num1, int num2, Model model);
+    String multiplicar(int num1, int num2, Model model);
+    String dividir(int num1, int num2, Model model);
+
 }

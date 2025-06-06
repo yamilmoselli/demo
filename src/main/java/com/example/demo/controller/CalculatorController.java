@@ -10,19 +10,15 @@ import org.springframework.web.bind.annotation.*;
 public class CalculatorController {
     
     @Autowired
-    private CalculatorService calculatorService;
+    private CalculatorService service;
 
     @GetMapping("/")
     public String index() {
-        return calculatorService.index();
+        return service.index();
     }
 
     @PostMapping("/calcular")
-    public String calcular(@RequestParam int num1,
-                           @RequestParam int num2,
-                           @RequestParam String operacion,
-                           Model model) {
-
-        return calculatorService.calcular(num1, num2, operacion, model);
+    public String calcular(@RequestParam int num1, @RequestParam int num2, @RequestParam String operacion, Model model) {
+        return service.calcular(num1, num2, operacion, model);
     }
 }

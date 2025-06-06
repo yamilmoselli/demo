@@ -1,15 +1,20 @@
 package com.example.demo.controller;
 
+import com.example.demo.services.CalculatorService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
 public class CalculatorController {
+    
+    @Autowired
+    private CalculatorService calculatorService;
 
     @GetMapping("/")
     public String index() {
-        return "index";
+        return calculatorService.index();
     }
 
     @PostMapping("/calcular")
@@ -18,28 +23,6 @@ public class CalculatorController {
                            @RequestParam String operacion,
                            Model model) {
 
-        double resultado = 0;
-        switch (operacion) {
-            case "suma":
-                resultado = num1 + num2;
-                break;
-            case "resta":
-                resultado = num1 - num2;
-                break;
-            case "multiplicacion":
-                resultado = num1 * num2;
-                break;
-            case "division":
-                if (num2 != 0) {
-                    resultado = (double) num1 / num2;
-                } else {
-                    model.addAttribute("error", "No se puede dividir por cero");
-                    return "index";
-                }
-                break;
-        }
-
-        model.addAttribute("resultado", resultado);
-        return "index";
+        return calculatorService.calcular(num1, num2, operacion, model);
     }
 }

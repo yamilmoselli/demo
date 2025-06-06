@@ -10,31 +10,33 @@ public class CalculatorServiceImp implements CalculatorService {
         return "index";
     }
 
-
-    public String calcular(int num1, int num2, String operacion, Model model) {
-
-        double resultado = 0;
-        switch (operacion) {
-            case "suma":
-                resultado = num1 + num2;
-                break;
-            case "resta":
-                resultado = num1 - num2;
-                break;
-            case "multiplicacion":
-                resultado = num1 * num2;
-                break;
-            case "division":
-                if (num2 != 0) {
-                    resultado = (double) num1 / num2;
-                } else {
-                    model.addAttribute("error", "No se puede dividir por cero");
-                    return "index";
-                }
-                break;
-        }
-
+    public String sumar(int num1, int num2, Model model) {
+        double resultado = num1 + num2;
         model.addAttribute("resultado", resultado);
         return "index";
     }
+
+    public String restar(int num1, int num2, Model model) {
+        double resultado = num1 - num2;
+        model.addAttribute("resultado", resultado);
+        return "index";
+    }
+
+    public String multiplicar(int num1, int num2, Model model) {
+        double resultado = num1 * num2;
+        model.addAttribute("resultado", resultado);
+        return "index";
+    }
+
+    public String dividir(int num1, int num2, Model model) {
+
+        if (num2 != 0) {
+            double resultado = (double) num1 / num2;
+            model.addAttribute("resultado", resultado);
+        } else {
+            model.addAttribute("error", "No se puede dividir por cero");
+        }
+        return "index";
+    }
+
 }

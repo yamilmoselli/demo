@@ -19,6 +19,24 @@ public class CalculatorController {
 
     @PostMapping("/calcular")
     public String calcular(@RequestParam int num1, @RequestParam int num2, @RequestParam String operacion, Model model) {
-        return service.calcular(num1, num2, operacion, model);
+
+        switch (operacion) {
+            case "sumar":
+                return service.sumar(num1, num2, model);
+
+            case "restar":
+                return service.restar(num1, num2, model);
+
+            case "multiplicar":
+                return service.multiplicar(num1, num2, model);
+
+            case "dividir":
+                return service.dividir(num1, num2, model);
+
+            default:
+                model.addAttribute("error", "Operacion incorrecta");
+                return "index";
+        }
+
     }
 }

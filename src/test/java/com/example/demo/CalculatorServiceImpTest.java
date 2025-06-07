@@ -15,7 +15,7 @@ public class CalculatorServiceImpTest {
     @Test
     public void testSumar1() {
         service.sumar(0, 0, model);
-        Assertions.assertEquals(5.0, model.getAttribute("resultado"));
+        Assertions.assertEquals(0.0, model.getAttribute("resultado"));
     }
 
     @Test

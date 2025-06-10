@@ -1,15 +1,15 @@
 package com.example.demo;
 
 
-import com.example.demo.services.CalculatorServiceImp;
+import com.example.demo.services.CalculatorService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 
-public class CalculatorServiceImpTest {
+public class CalculatorServiceTest {
 
-    CalculatorServiceImp service = new CalculatorServiceImp();
+    CalculatorService service = new CalculatorService();
     Model model = new ExtendedModelMap();
 
     @Test

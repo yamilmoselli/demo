@@ -7,8 +7,10 @@ on:
     branches: [ "master" ]
 
 jobs:
-  build:
 
+  build-and-test:
+
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
 
     steps:
@@ -48,17 +50,25 @@ jobs:
       if: failure()
       run: |
         curl -X POST -H 'Content-type: application/json' \
-        --data '{"text":"Los tests *SÍ encontraron errores*. Abortando merge hacia master. Abortando deploy. "}' \
+        --data '{"text":"Los tests *SÍ encontraron errores*. Merge hacia master prohibido. Abortando deploy. "}' \
         ${{ secrets.SLACK_WEBHOOK_URL }}
+
+  deploy:
+
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - uses: actions/checkout@v4
         
     - name: Notificar a Slack despliegue iniciado
-      if: success()
       run: |
         curl -X POST -H 'Content-type: application/json' \
         --data '{"text":"Iniciando despliegue en Render.. aguarde unos segundos e ingrese desde: https://demo-f9ag.onrender.com"}' \
         ${{ secrets.SLACK_WEBHOOK_URL }}        
 
-    - name: Deploy with Render
+    - name: Deploy con Render
       if: success()
       run : |
         curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK }}

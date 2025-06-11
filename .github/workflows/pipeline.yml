@@ -20,7 +20,7 @@ jobs:
     - name: Notificar a Slack pull request recibido
       run: |
         curl -X POST -H 'Content-type: application/json' \
-        --data '{"text":" Nuevo pull request hacia *master*."}' \
+        --data '{"text":" Nuevo pull request hacia *master*"}' \
         ${{ secrets.SLACK_WEBHOOK_URL }}      
 
     - name: Set up JDK 21
@@ -30,28 +30,63 @@ jobs:
         distribution: 'temurin'
         cache: maven
 
-    - name: Notificar a Slack tests iniciados
+    - name: Notificar a Slack tests unitarios iniciados
       run: |
         curl -X POST -H 'Content-type: application/json' \
-        --data '{"text":"Se están ejecutando los tests..."}' \
+        --data '{"text":"Se están ejecutando los tests unitarios..."}' \
         ${{ secrets.SLACK_WEBHOOK_URL }}        
 
-    - name: Build and execute tests with Maven
+    - name: Build and execute unit tests with Maven
+      id: unitTests
       run: mvn -B package
 
-    - name: Notificar a Slack tests superados
-      if: success()
+    - name: Notificar a Slack tests unitarios superados
+      if: steps.unitTests.outcome == 'success'
       run: |
         curl -X POST -H 'Content-type: application/json' \
-        --data '{"text":"Los tests *NO encontraron errores*."}' \
+        --data '{"text":"Los tests unitarios *NO encontraron errores*"}' \
         ${{ secrets.SLACK_WEBHOOK_URL }}
 
-    - name: Notificar a Slack tests fallidos
-      if: failure()
+    - name: Notificar a Slack tests unitarios fallidos
+      if: steps.unitTests.outcome == 'failure'
       run: |
         curl -X POST -H 'Content-type: application/json' \
-        --data '{"text":"Los tests *SÍ encontraron errores*. Merge hacia master *prohibido*. Abortando deploy. "}' \
+        --data '{"text":"Los tests unitarios *SÍ encontraron errores*. Merge hacia master *prohibido*.\
+        Escaneo de SonarQubeCloud cancelado. Abortando deploy"}' \
         ${{ secrets.SLACK_WEBHOOK_URL }}
+
+    - name: Notificar a Slack escaneo de SonarQube Cloud iniciado
+      if: steps.unitTests.outcome == 'success'
+      run: |
+        curl -X POST -H 'Content-type: application/json' \
+        --data '{"text":"Se está ejecutando el escaneo de SonarQube Cloud..."}' \
+        ${{ secrets.SLACK_WEBHOOK_URL }}        
+
+    - name: SonarQube Cloud Scan
+      if: steps.unitTests.outcome == 'success'
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      run: mvn verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
+        -Dsonar.projectKey=<yamilmoselli_demo> \
+        -Dsonar.organization=<yamilmoselli> \
+        -Dsonar.host.url=https://sonarcloud.io
+
+    - name: Notificar a Slack escaneo de SonarQubeCloud exitoso
+      if: steps.unitTests.outcome == 'success' && success()
+      run: |
+        curl -X POST -H 'Content-type: application/json' \
+        --data '{"text":"El escaneo de SonarQubeCloud *SUPERA los estándares de calidad*.\
+        https://sonarcloud.io/project/overview?id=yamilmoselli_demo"}' \
+        ${{ secrets.SLACK_WEBHOOK_URL }}
+
+    - name: Notificar a Slack escaneo de SonarQubeCloud fallido
+      if: steps.unitTests.outcome == 'success' && failure()
+      run: |
+        curl -X POST -H 'Content-type: application/json' \
+        --data '{"text":"El escaneo de SonarQubeCloud *NO SUPERA los estándares de calidad*.\
+        Merge hacia master *prohibido*.Abortando deploy. https://sonarcloud.io/project/overview?id=yamilmoselli_demo"}' \
+        ${{ secrets.SLACK_WEBHOOK_URL }}
+        
 
   deploy:
 

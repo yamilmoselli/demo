@@ -37,10 +37,11 @@ jobs:
         ${{ secrets.SLACK_WEBHOOK_URL }}        
 
     - name: Build and execute unit tests with Maven
+      id: unitTests
       run: mvn -B package
 
     - name: Notificar a Slack tests unitarios superados
-      if: success()
+      if: steps.unitTests.outcome == 'success'
       run: |
         curl -X POST -H 'Content-type: application/json' \
         --data '{"text":"Los tests unitarios *NO encontraron errores*\n Iniciando escaneo de SonarQube Cloud...\n\
@@ -49,7 +50,7 @@ jobs:
         ${{ secrets.SLACK_WEBHOOK_URL }}
 
     - name: Notificar a Slack tests unitarios fallidos
-      if: failure()
+      if: steps.unitTests.outcome == 'failure'
       run: |
         curl -X POST -H 'Content-type: application/json' \
         --data '{"text":"Los tests unitarios *SÍ encontraron errores*. Merge hacia master *prohibido*.\
@@ -57,7 +58,7 @@ jobs:
         ${{ secrets.SLACK_WEBHOOK_URL }}       
 
     - name: SonarQube Cloud Scan
-      if: success()
+      if: steps.unitTests.outcome == 'success'
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       run: |

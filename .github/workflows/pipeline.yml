@@ -67,7 +67,7 @@ jobs:
       if: failure()
       run: |
         curl -X POST -H 'Content-type: application/json' \
-        --data '{"text":"Los tests unitarios *SÍ encontraron errores*. Merge hacia master *prohibido*.Abortando deploy"}' \
+        --data '{"text":"Los tests unitarios *SÍ encontraron errores*. Merge hacia master *prohibido*. Abortando escaneo de SonarQube Cloud. Abortando deploy"}' \
         ${{ secrets.SLACK_WEBHOOK_URL }}       
 
 

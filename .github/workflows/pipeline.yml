@@ -43,7 +43,9 @@ jobs:
       if: success()
       run: |
         curl -X POST -H 'Content-type: application/json' \
-        --data '{"text":"Los tests unitarios *NO encontraron errores*"}' \
+        --data '{"text":"Los tests unitarios *NO encontraron errores*\n Iniciando escaneo en SonarQube Cloud...\n \
+        Merge a master permitido => estándares de calidad superados\n \
+        Merge a master prohibido => estándares de calidad no superados"}' \
         ${{ secrets.SLACK_WEBHOOK_URL }}
 
     - name: SonarQube Cloud Scan

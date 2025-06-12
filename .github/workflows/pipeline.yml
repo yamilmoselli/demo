@@ -64,6 +64,7 @@ jobs:
 
     - name: SonarQube Cloud Scan
       if: steps.unitTests.outcome == 'success'
+      id: sonar
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       run: |
@@ -73,7 +74,7 @@ jobs:
         -Dsonar.host.url=https://sonarcloud.io
 
     - name: Notificar a Slack escaneo de SonarQubeCloud exitoso
-      if: steps.unitTests.outcome == 'success' && success()
+      if: steps.sonar.outcome == 'success'
       run: |
         curl -X POST -H 'Content-type: application/json' \
         --data '{"text":"El escaneo de SonarQubeCloud *SUPERA los estándares de calidad*.\
@@ -81,7 +82,7 @@ jobs:
         ${{ secrets.SLACK_WEBHOOK_URL }}
 
     - name: Notificar a Slack escaneo de SonarQubeCloud fallido
-      if: steps.unitTests.outcome == 'success' && failure()
+      if: steps.sonar.outcome == 'failure'
       run: |
         curl -X POST -H 'Content-type: application/json' \
         --data '{"text":"El escaneo de SonarQubeCloud *NO SUPERA los estándares de calidad*.\

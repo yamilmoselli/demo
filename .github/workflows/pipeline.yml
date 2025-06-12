@@ -46,6 +46,16 @@ jobs:
         --data '{"text":"Los tests unitarios *NO encontraron errores*"}' \
         ${{ secrets.SLACK_WEBHOOK_URL }}
 
+    - name: SonarQube Cloud Scan
+      if: success()
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      run: |
+        mvn verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
+        -Dsonar.projectKey=yamilmoselli_demo \
+        -Dsonar.organization=yamilmoselli \
+        -Dsonar.host.url=https://sonarcloud.io        
+
     - name: Notificar a Slack tests unitarios fallidos
       if: failure()
       run: |
@@ -53,14 +63,6 @@ jobs:
         --data '{"text":"Los tests unitarios *SÍ encontraron errores*. Merge hacia master *prohibido*.Abortando deploy"}' \
         ${{ secrets.SLACK_WEBHOOK_URL }}       
 
-    - name: SonarQube Cloud Scan
-      env:
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      run: |
-        mvn verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
-        -Dsonar.projectKey=yamilmoselli_demo \
-        -Dsonar.organization=yamilmoselli \
-        -Dsonar.host.url=https://sonarcloud.io
 
   deploy:
 

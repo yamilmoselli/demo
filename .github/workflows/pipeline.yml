@@ -43,8 +43,15 @@ jobs:
       if: success()
       run: |
         curl -X POST -H 'Content-type: application/json' \
-        --data '{"text":"Los tests unitarios *NO encontraron errores*\n Iniciando escaneo en SonarQube Cloud...\nMerge a master permitido => estándares de calidad superados\nMerge a master prohibido => estándares de calidad no superados"}' \
+        --data '{"text":"Los tests unitarios *NO encontraron errores*\nIniciando escaneo en SonarQube Cloud..."}' \
         ${{ secrets.SLACK_WEBHOOK_URL }}
+
+    - name: Notificar a Slack resultado de estándares de calidad
+      if: success()
+      run: |
+        curl -X POST -H 'Content-type: application/json' \
+        --data '{"text":"Merge a master permitido => estándares de calidad superados\nMerge a master prohibido => estándares de calidad no superados\nhttps://sonarcloud.io/project/overview?id=yamilmoselli_demo"}' \
+        ${{ secrets.SLACK_WEBHOOK_URL }}        
 
     - name: SonarQube Cloud Scan
       if: success()

@@ -59,7 +59,9 @@ jobs:
       if: steps.unitTests.outcome == 'success'
       run: |
         curl -X POST -H 'Content-type: application/json' \
-        --data '{"text":"Se está ejecutando el escaneo de SonarQube Cloud..."}' \
+        --data '{"text":"Se está ejecutando el escaneo de SonarQube Cloud... Merge a master permitido --> estándares de\
+        calidad pasados. Merge a master prohibido --> estándares de calidad no superados.\
+        https://sonarcloud.io/project/overview?id=yamilmoselli_demo"}' \
         ${{ secrets.SLACK_WEBHOOK_URL }}        
 
     - name: SonarQube Cloud Scan
@@ -72,23 +74,6 @@ jobs:
         -Dsonar.projectKey=yamilmoselli_demo \
         -Dsonar.organization=yamilmoselli \
         -Dsonar.host.url=https://sonarcloud.io
-
-    - name: Notificar a Slack escaneo de SonarQubeCloud exitoso
-      if: steps.sonar.outcome == 'success'
-      run: |
-        curl -X POST -H 'Content-type: application/json' \
-        --data '{"text":"El escaneo de SonarQubeCloud *SUPERA los estándares de calidad*.\
-        https://sonarcloud.io/project/overview?id=yamilmoselli_demo"}' \
-        ${{ secrets.SLACK_WEBHOOK_URL }}
-
-    - name: Notificar a Slack escaneo de SonarQubeCloud fallido
-      if: steps.sonar.outcome == 'failure'
-      run: |
-        curl -X POST -H 'Content-type: application/json' \
-        --data '{"text":"El escaneo de SonarQubeCloud *NO SUPERA los estándares de calidad*.\
-        Merge hacia master *prohibido*.Abortando deploy. https://sonarcloud.io/project/overview?id=yamilmoselli_demo"}' \
-        ${{ secrets.SLACK_WEBHOOK_URL }}
-        
 
   deploy:
 

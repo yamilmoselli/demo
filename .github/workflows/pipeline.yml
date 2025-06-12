@@ -67,8 +67,8 @@ jobs:
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       run: mvn verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
-        -Dsonar.projectKey=<yamilmoselli_demo> \
-        -Dsonar.organization=<yamilmoselli> \
+        -Dsonar.projectKey=yamilmoselli_demo \
+        -Dsonar.organization=yamilmoselli \
         -Dsonar.host.url=https://sonarcloud.io
 
     - name: Notificar a Slack escaneo de SonarQubeCloud exitoso
